@@ -1,0 +1,29 @@
+﻿<Project Sdk="WixToolset.Sdk/7.0.0">
+  <PropertyGroup>
+    <OutputName>opencodelist-cli-$(Platform)</OutputName>
+    <OutputType>Package</OutputType>
+    <AcceptEula>wix7</AcceptEula>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <BindFiles>false</BindFiles>
+    <SuppressPdbOutput>true</SuppressPdbOutput>
+    <Cultures>;</Cultures>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <BindFiles>false</BindFiles>
+    <SuppressPdbOutput>true</SuppressPdbOutput>
+    <Cultures>;</Cultures>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <BindFiles>false</BindFiles>
+    <SuppressPdbOutput>true</SuppressPdbOutput>
+    <Cultures>;</Cultures>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Netfx.wixext" Version="7.0.0" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="7.0.0" />
+  </ItemGroup>
+  <PropertyGroup>
+    <SuppressIces>ICE91</SuppressIces>
+  </PropertyGroup>
+</Project>

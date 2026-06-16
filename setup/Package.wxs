@@ -1,0 +1,148 @@
+﻿<Wix 
+  xmlns="http://wixtoolset.org/schemas/v4/wxs" 
+  xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx"
+  xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <!-- Version number from EXE file -->
+  <?define Version="!(bind.FileVersion.Ocl.exe)" ?>
+
+  <!-- The upgrade code GUID for the product (DO NOT CHANGE!) -->
+  <?define UpgradeCode="ea2c1153-763b-4fee-a25a-81696dc0b97a" ?>
+
+  <!-- The URL for add/remove programs -->
+  <?define AppHelpLink="https://github.com/opencodeList.cli" ?>
+
+  <!-- 32-bit / 64-bit dependend variables -->
+  <?if $(var.Platform) = x64 ?>
+    <?define SourceFolder = "..\src\bin\Publish\win-x64" ?>
+  <?else?>
+    <?define SourceFolder = "..\src\bin\Publish\win-x86" ?>
+  <?endif?>
+
+  <!-- Package definition -->
+  <Package
+      Name="!(loc.AppName)"
+      Language="1033"
+      Manufacturer="!(loc.Manufacturer)"
+      Version="$(var.Version)"
+      Scope="perUser"
+      UpgradeCode="$(var.UpgradeCode)"
+      Compressed="true">
+
+    <!-- Summary Information Stream -->
+    <SummaryInformation 
+      Description="!(loc.AppDescription)" />
+
+    <!-- App icon -->
+    <Icon Id="AppIcon.exe" SourceFile="images\app.ico" />
+
+    <!-- Properties for add/remove programs -->
+    <Property Id="ARPPRODUCTICON" Value="AppIcon.exe" />
+    <Property Id="ARPHELPLINK" Value="$(var.AppHelpLink)" />
+    
+    <!-- Default installation folder -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <!-- Disable path validation -->
+    <Property Id="WIXUI_DONTVALIDATEPATH" Value="1" />
+    
+    <!-- Upgrade logic -->
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+    <!-- Determine the directory of a previous installation (if one exists). If not INSTALLDIR stays empty -->
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id="DetermineInstallLocation" Type="raw" Root="HKCU" Key="Software\!(loc.ManufacturerFolder)\!(loc.AppName)" Name="InstallLocation" />
+    </Property>
+
+    <!-- Set ARPINSTALLLOCATION property (see https://learn.microsoft.com/en-us/windows/win32/msi/arpinstalllocation) -->
+    <CustomAction Id="SetARPINSTALLLOCATION" Property="ARPINSTALLLOCATION" Value="[INSTALLDIR]" />
+
+    <!-- This is the main installer sequence run when the product is actually installed -->
+    <InstallExecuteSequence>
+
+      <!-- Determine the install location after the install path has been validated by the installer -->
+      <Custom Action="SetARPINSTALLLOCATION" After="InstallValidate"></Custom>
+
+    </InstallExecuteSequence>
+
+    <!-- Compatibility check for .NET 10 -->
+    <netfx:DotNetCompatibilityCheck
+      Property="DOTNETRUNTIMECHECK"
+      Platform="$(var.Platform)"
+      RollForward="major"
+      RuntimeType="core"
+      Version="10.0.0"/>
+
+    <!-- Embed cab files into msi -->
+    <MediaTemplate EmbedCab="yes"/>
+    
+    <!-- Feature structure -->
+    <Feature Id="Complete" Title="!(loc.FeaturesCompleteTitle)" Description="!(loc.FeaturesCompleteDescription)" Display="expand" Level="1" ConfigurableDirectory="INSTALLDIR">
+
+      <Feature Id="Core" Title="!(loc.FeatureCoreTitle)" Description="!(loc.FeatureCoreDescription)" Level="1">
+
+        <ComponentRef Id="Ocl.exe" />
+        <ComponentRef Id="Registry.InstallLocation" />
+
+      </Feature>
+
+    </Feature>
+
+    <!-- Directory and file structure -->
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="ProjectFolder" Name="!(loc.ManufacturerFolder)">
+        <Directory Id="INSTALLDIR" Name="!(loc.AppFolder)">
+
+          <!-- EXE file -->
+          <Component Id="Ocl.exe" Guid="90fcb9a0-018c-4f33-ac93-89e9b91e25c5">
+
+            <File
+               Id="Ocl.exe"
+               Source="$(var.SourceFolder)\Ocl.exe" />
+
+            <RegistryValue
+              Root="HKCU"
+              Key="Software\!(loc.ManufacturerFolder)\!(loc.AppName)\Components"
+              Name="Ocl.exe"
+              Type="integer"
+              Value="1"
+              KeyPath="yes" />
+
+          </Component>
+
+          <!-- Registry entries -->
+          <Component Id="Registry.InstallLocation" Guid="4f4b3104-27e5-4bc0-8c71-5e07f65ca0f5">
+            <RegistryKey Root="HKCU" Key="Software\!(loc.ManufacturerFolder)\!(loc.AppName)">
+              <RegistryValue
+                Name="InstallLocation"
+                Value="[INSTALLDIR]"
+                Type="string"
+                KeyPath="yes" />
+            </RegistryKey>
+
+            <Environment
+                Id="PATH"
+                Name="PATH"
+                Value="[INSTALLDIR]"
+                Permanent="yes"
+                Part="last"
+                Action="set"
+                System="no" />
+
+            <RemoveFolder Id="RemoveInstallDir" Directory="INSTALLDIR" On="uninstall" />
+            <RemoveFolder Id="RemoveProjectFolder" Directory="ProjectFolder" On="uninstall" />
+
+          </Component>
+
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Our installer UI -->
+    <UI>
+      <UIRef Id="CustomWixUI_InstallDir" />
+    </UI> 
+
+  </Package>
+  
+</Wix>
