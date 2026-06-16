@@ -3,7 +3,7 @@
 # OpenCodeList CLI
 
 [![.Net](https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white)](https://dotnet.microsoft.com/)
-[![GitHub License](https://img.shields.io/github/license/openpotato/sqldocs?style=for-the-badge)](./LICENSE)
+[![GitHub License](https://img.shields.io/github/license/openpotato/opencodelist.cli?style=for-the-badge)](./LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-available-brightgreen?style=for-the-badge)](https://github.com/openpotato/opencodelist.cli/wiki)
 
 </div>
