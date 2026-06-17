@@ -51,26 +51,28 @@ public class ImportManager
     /// </summary>
     /// <param name="file">The OpenCodeList document file</param>
     /// <param name="csvFile">The CSV file</param>
+    /// <param name="csvConfiguration">The CSV configuration</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>A task that represents the asynchronous import operation.</returns>
-    public static async Task FromCsvAsync(FileInfo file, FileInfo csvFile, CancellationToken cancellationToken)
+    public static async Task FromCsvAsync(FileInfo file, FileInfo csvFile, CsvConfiguration csvConfiguration, CancellationToken cancellationToken)
     {
         var importManager = new ImportManager(file);
-        await importManager.FromCsvAsync(csvFile, cancellationToken);
+        await importManager.FromCsvAsync(csvFile, csvConfiguration, cancellationToken);
     }
 
     /// <summary>
     /// Executes a data import from CSV
     /// </summary>
     /// <param name="csvFile">The CSV file</param>
+    /// <param name="csvConfiguration">The CSV configuration</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>A task that represents the asynchronous import operation.</returns>
-    public async Task FromCsvAsync(FileInfo csvFile, CancellationToken cancellationToken)
+    public async Task FromCsvAsync(FileInfo csvFile, CsvConfiguration csvConfiguration, CancellationToken cancellationToken)
     {
         try
         {
             // Start...
-            _consoleWriter.Caption($"Import to OpenCodeList from CSV...");
+            _consoleWriter.Caption($"Import to code list document from {(csvConfiguration.Separator == ';' ? "CSV (semicolon)" : "CSV (comma)")}...");
 
             // Open code list document
             var oclDocument = await CodeListDocument.LoadAsync(_file, cancellationToken);
@@ -82,7 +84,7 @@ public class ImportManager
             using var strReader = new StreamReader(csvFile.FullName);
 
             // Create CSV reader
-            var csvTableReader = new CsvTableReader(strReader, new CsvConfiguration { Separator = ',' });
+            var csvTableReader = new CsvTableReader(strReader, csvConfiguration);
 
             // Read CSV headers
             await csvTableReader.ReadHeadersAsync();

@@ -12,8 +12,8 @@
 
 The CLI provides two primary commands:
 
-* **export**: Exports data from an OpenCodeList file to a supported destination format (CSV or Excel).
-* **import**: Imports code list data from a supported source (CSV) format into an OpenCodeList file.
+* **export**: Exports data from a code list document (in OpenCodeList format) to a supported destination format (CSV, SSV, or Excel).
+* **import**: Imports code list data from a supported source (CSV or SSV) format into a code list document (in OpenCodeList format).
 
 OpenCodeList CLI is free software and is released under the GNU Affero General Public License (AGPL) Version 3.
 

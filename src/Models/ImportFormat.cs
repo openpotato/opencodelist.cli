@@ -26,5 +26,6 @@ namespace OpenCodeList.Cli;
 /// </summary>
 public enum ImportFormat
 {
-    Csv
+    Csv,
+    Ssv
 }

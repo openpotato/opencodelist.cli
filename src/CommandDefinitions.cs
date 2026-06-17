@@ -30,16 +30,16 @@ namespace OpenCodeList.Cli;
 public static class CommandDefinitions
 {
     /// <summary>
-    /// Defines the "export" command, which exports from an OpenCodeList file to a supported format.
+    /// Defines the "export" command, which exports from a code list document to a supported format.
     /// </summary>
     /// <returns>The configured export command</returns>
     public static Command Export()
     {
-        var command = new Command("export", "Exports from an OpenCodeList file to a supported format")
+        var command = new Command("export", "Exports from a code list document to a supported format")
         {
             new Option<FileInfo>("--file", "-f")
             {
-                Description = "Specifies the OpenCodeList source file",
+                Description = "Specifies the code list document source file",
                 Required = true
             },
             new Option<ExportFormat>("--to-format")
@@ -64,16 +64,16 @@ public static class CommandDefinitions
     }
 
     /// <summary>
-    /// Defines the "import" command, which imports from a supported format to an OpenCodeList file.
+    /// Defines the "import" command, which imports from a supported format to a code list document.
     /// </summary>
     /// <returns>The configured import command</returns>
     public static Command Import()
     {
-        var command = new Command("import", "Imports to an OpenCodeList file from a supported format")
+        var command = new Command("import", "Imports to a code list document from a supported format")
         {
             new Option<FileInfo>("--file", "-f")
             {
-                Description = "Specifies the OpenCodeList destination file",
+                Description = "Specifies the code list document destination file",
                 Required = true
             },
             new Option<ImportFormat>("--from-format")

@@ -19,6 +19,7 @@
  */
 #endregion
 
+using Enbrea.Csv;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -33,9 +34,9 @@ namespace OpenCodeList.Cli;
 public static class CommandHandlers
 {
     /// <summary>
-    /// Executes the export command, which exports from an OpenCodeList file to a supported format.
+    /// Executes the export command, which exports from a code list document to a supported format.
     /// </summary>
-    /// <param name="file">The OpenCodeList document file</param>
+    /// <param name="file">The code list document file</param>
     /// <param name="toFormat">The export format</param>
     /// <param name="toFile">The destination file</param>
     /// <returns>A task that represents the asynchronous export operation.</returns>
@@ -46,7 +47,10 @@ public static class CommandHandlers
             switch (toFormat)
             {
                 case ExportFormat.Csv:
-                    await ExportManager.ToCsvAsync(file, toFile, cancellationToken);
+                    await ExportManager.ToCsvAsync(file, toFile, new CsvConfiguration() { Separator = ',' }, cancellationToken);
+                    break;
+                case ExportFormat.Ssv:
+                    await ExportManager.ToCsvAsync(file, toFile, new CsvConfiguration() { Separator = ';' }, cancellationToken);
                     break;
                 case ExportFormat.Xlsx:
                     await ExportManager.ToXlsxAsync(file, toFile, cancellationToken);
@@ -58,9 +62,9 @@ public static class CommandHandlers
     }
 
     /// <summary>
-    /// Executes the import command, which imports from a supported format to an OpenCodeList file.
+    /// Executes the import command, which imports from a supported format to a code list document.
     /// </summary>
-    /// <param name="file">The OpenCodeList document file</param>
+    /// <param name="file">The code list document file</param>
     /// <param name="fromFormat">The import format</param>
     /// <param name="fromFile">The source file</param>
     /// <returns>A task that represents the asynchronous import operation.</returns>
@@ -72,7 +76,10 @@ public static class CommandHandlers
             switch (fromFormat)
             {
                 case ImportFormat.Csv:
-                    await ImportManager.FromCsvAsync(file, fromFile, cancellationToken);
+                    await ImportManager.FromCsvAsync(file, fromFile, new CsvConfiguration() { Separator = ',' }, cancellationToken);
+                    break;
+                case ImportFormat.Ssv:
+                    await ImportManager.FromCsvAsync(file, fromFile, new CsvConfiguration() { Separator = ';' }, cancellationToken);
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported source file format: {fromFormat}");

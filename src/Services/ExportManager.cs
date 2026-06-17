@@ -54,12 +54,13 @@ public class ExportManager
     /// </summary>
     /// <param name="file">The OpenCodeList document file</param>
     /// <param name="csvFile">The CSV file</param>
+    /// <param name="csvConfiguration">The CSV configuration</param>    
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>A task that represents the asynchronous export operation.</returns>
-    public static async Task ToCsvAsync(FileInfo file, FileInfo csvFile, CancellationToken cancellationToken)
+    public static async Task ToCsvAsync(FileInfo file, FileInfo csvFile, CsvConfiguration csvConfiguration, CancellationToken cancellationToken)
     {
         var exportManager = new ExportManager(file);
-        await exportManager.ToCsvAsync(csvFile, cancellationToken);
+        await exportManager.ToCsvAsync(csvFile, csvConfiguration, cancellationToken);
     }
 
     /// <summary>
@@ -79,14 +80,15 @@ public class ExportManager
     /// Executes a data export to CSV
     /// </summary>
     /// <param name="csvFile">The CSV file</param>
+    /// <param name="csvConfiguration">The CSV configuration</param>    
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>A task that represents the asynchronous export operation.</returns>
-    public async Task ToCsvAsync(FileInfo csvFile, CancellationToken cancellationToken)
+    public async Task ToCsvAsync(FileInfo csvFile, CsvConfiguration csvConfiguration, CancellationToken cancellationToken)
     {
         try
         {
             // Start...
-            _consoleWriter.Caption($"Export from OpenCodeList to CSV...");
+            _consoleWriter.Caption($"Export from code list document to {(csvConfiguration.Separator == ';' ? "CSV (semicolon)" : "CSV (comma)")}...");
 
             // Open code list document
             var codeList = await CodeListDocument.LoadAsync(_file, cancellationToken);
@@ -103,7 +105,7 @@ public class ExportManager
             using var strWriter = new StreamWriter(csvFile.FullName);
 
             // Create CSV writer
-            var csvTableWriter = new CsvTableWriter(strWriter, new CsvConfiguration { Separator = ',' }, csvHeaders);
+            var csvTableWriter = new CsvTableWriter(strWriter, csvConfiguration, csvHeaders);
 
             // Write CSV headers
             await csvTableWriter.WriteHeadersAsync();
@@ -140,7 +142,7 @@ public class ExportManager
         try
         {
             // Start...
-            _consoleWriter.Caption($"Export from OpenCodeList to Excel...");
+            _consoleWriter.Caption($"Export from code list document to Excel...");
 
             // Open code list document
             var codeList = await CodeListDocument.LoadAsync(_file, cancellationToken);

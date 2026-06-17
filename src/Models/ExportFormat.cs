@@ -27,5 +27,6 @@ namespace OpenCodeList.Cli;
 public enum ExportFormat
 {
     Csv,
+    Ssv,
     Xlsx
 }
